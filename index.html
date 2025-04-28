@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<!-- saved from url=(0031)file:///Users/kanadbhunje/.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Investment Tracker</title>
+
+  <!-- Link to Google Fonts -->
+  <link href="./index1_files/css2" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPU6svLlLoGNDwUwyQLn0Swu3JNdUSmmdQlQ&s') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.5);
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 0;
+    }
+    .container, .dashboard, .fd-page, .stock-page {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      width: 90%;
+      max-width: 900px;
+      display: none;
+      animation: fadeIn 0.8s ease;
+    }
+    .show { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h1, h2 {
+      text-align: center;
+      color: #1d3557;
+      margin-bottom: 20px;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background-color: #457b9d;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover { background-color: #1d3557; }
+    .toggle-auth {
+      margin-top: 10px;
+      text-align: center;
+      cursor: pointer;
+      color: #457b9d;
+      text-decoration: underline;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+      background: #f1faee;
+    }
+    th {
+      background-color: #a8dadc;
+    }
+    .section {
+      margin-top: 30px;
+    }
+    .quote {
+      text-align: center;
+      color: white;
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      text-shadow: 2px 2px 4px #000;
+    }
+    .stock-img {
+      width: 100%;
+      margin: 20px 0;
+      border-radius: 10px;
+    }
+    .fd-stock-boxes {
+      display: flex;
+      justify-content: space-between;
+    }
+    .box {
+      width: 48%;
+      padding: 20px;
+      background-color: #f1faee;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .box:hover {
+      background-color: #a8dadc;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+
+  <div class="quote">
+    📈 View all your investments at one place!
+  </div>
+
+  <!-- Login Page -->
+  <div class="container" id="authPage">
+    <h2 id="authTitle">Login</h2>
+    <input type="text" id="authUsername" placeholder="Username">
+    <input type="password" id="authPassword" placeholder="Password">
+    <button onclick="handleAuth()">Login</button>
+    <div class="toggle-auth" onclick="toggleAuth()">Don't have an account? Create one</div>
+  </div>
+
+  <!-- Dashboard Page -->
+  <div class="dashboard show" id="dashboardPage">
+    <h1>💼 Smart Investment Tracker</h1>
+    <img class="stock-img" src="./index1_files/images" alt="Stock Graph">
+
+    <div class="fd-stock-boxes">
+      <div class="box" onclick="openFDPage()">
+        <h2>Add Fixed Deposit</h2>
+        <p>Track your fixed deposits</p>
+      </div>
+      <div class="box" onclick="openStockPage()">
+        <h2>Add Stock</h2>
+        <p>Track your stocks</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fixed Deposit Page -->
+  <div class="fd-page" id="fdPage">
+    <h2>Add Fixed Deposit</h2>
+    <input type="text" id="fdBank" placeholder="Bank Name">
+    <input type="number" id="fdRate" placeholder="Interest Rate (%)">
+    <input type="date" id="fdMaturityDate">
+    <input type="number" id="fdAmount" placeholder="Maturity Amount">
+    <button onclick="addFD()">➕ Add FD</button>
+    <table id="fdTable">
+      <thead>
+        <tr>
+          <th>Bank</th>
+          <th>Rate (%)</th>
+          <th>Maturity</th>
+          <th>Amount</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button onclick="backToDashboard()">Back to Dashboard</button>
+  </div>
+
+  <!-- Stock Page -->
+  <div class="stock-page" id="stockPage">
+    <h2>Add Stock</h2>
+    <input type="text" id="stockName" placeholder="Stock Name">
+    <input type="number" id="stockQty" placeholder="Quantity">
+    <input type="number" id="stockPrice" placeholder="Current Price">
+    <button onclick="addStock()">➕ Add Stock</button>
+    <table id="stockTable">
+      <thead>
+        <tr>
+          <th>Stock</th>
+          <th>Qty</th>
+          <th>Price</th>
+          <th>Total</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button onclick="backToDashboard()">Back to Dashboard</button>
+  </div>
+
+  <script>
+    let isLogin = true;
+    let currentUser = "";
+
+    function toggleAuth() {
+      isLogin = !isLogin;
+      document.getElementById('authTitle').innerText = isLogin ? "Login" : "Create Account";
+      document.querySelector('.toggle-auth').innerText = isLogin
+        ? "Don't have an account? Create one"
+        : "Already have an account? Login";
+      document.querySelector('button').innerText = isLogin ? "Login" : "Create Account";
+    }
+
+    function handleAuth() {
+      const username = document.getElementById("authUsername").value;
+      const password = document.getElementById("authPassword").value;
+      if (!username || !password) { alert("Please fill both fields"); return; }
+      const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+      if (isLogin) {
+        if (!users[username] || users[username].password !== password) {
+          alert("Invalid credentials"); return;
+        }
+        currentUser = username;
+      } else {
+        if (users[username]) { alert("User already exists"); return; }
+        users[username] = { password, data: { fds: [], stocks: [] } };
+        localStorage.setItem("users", JSON.stringify(users));
+        alert("Account created! You can now login.");
+        toggleAuth(); return;
+      }
+      loadUserData();
+      document.getElementById("authPage").classList.remove("show");
+      document.getElementById("dashboardPage").classList.add("show");
+    }
+
+    function loadUserData() {
+      const users = JSON.parse(localStorage.getItem("users") || "{}");
+      const data = users[currentUser].data;
+
+      // Load FDs
+      const fdTable = document.getElementById('fdTable').getElementsByTagName('tbody')[0];
+      fdTable.innerHTML = "";
+      data.fds.forEach((fd, index) => {
+        const row = fdTable.insertRow();
+        row.innerHTML = `<td>${fd.bank}</td><td>${fd.rate}%</td><td>${fd.date}</td><td>₹${fd.amount}</td><td><button onclick="deleteFD(${index})">❌ Delete</button></td>`;
+      });
+
+      // Load Stocks
+      const stockTable = document.getElementById('stockTable').getElementsByTagName('tbody')[0];
+      stockTable.innerHTML = "";
+      data.stocks.forEach((stock, index) => {
+        const row = stockTable.insertRow();
+        row.innerHTML = `<td>${stock.name}</td><td>${stock.qty}</td><td>₹${stock.price}</td><td>₹${(stock.qty * stock.price).toFixed(2)}</td><td><button onclick="deleteStock(${index})">❌ Delete</button></td>`;
+      });
+    }
+
+    function addFD() {
+      const bank = document.getElementById('fdBank').value;
+      const rate = document.getElementById('fdRate').value;
+      const date = document.getElementById('fdMaturityDate').value;
+      const amount = document.getElementById('fdAmount').value;
+      if (!bank || !rate || !date || !amount) { alert("Fill all FD fields"); return; }
+
+      const users = JSON.parse(localStorage.getItem("users"));
+      users[currentUser].data.fds.push({ bank, rate, date, amount });
+      localStorage.setItem("users", JSON.stringify(users));
+      loadUserData();
+
+      document.getElementById('fdBank').value = '';
+      document.getElementById('fdRate').value = '';
+      document.getElementById('fdMaturityDate').value = '';
+      document.getElementById('fdAmount').value = '';
+    }
+
+    function addStock() {
+      const name = document.getElementById('stockName').value;
+      const qty = document.getElementById('stockQty').value;
+      const price = document.getElementById('stockPrice').value;
+      if (!name || !qty || !price) { alert("Fill all stock fields"); return; }
+
+      const users = JSON.parse(localStorage.getItem("users"));
+      users[currentUser].data.stocks.push({ name, qty, price });
+      localStorage.setItem("users", JSON.stringify(users));
+      loadUserData();
+
+      document.getElementById('stockName').value = '';
+      document.getElementById('stockQty').value = '';
+      document.getElementById('stockPrice').value = '';
+    }
+
+    function deleteFD(index) {
+      const users = JSON.parse(localStorage.getItem("users"));
+      users[currentUser].data.fds.splice(index, 1);
+      localStorage.setItem("users", JSON.stringify(users));
+      loadUserData();
+    }
+
+    function deleteStock(index) {
+      const users = JSON.parse(localStorage.getItem("users"));
+      users[currentUser].data.stocks.splice(index, 1);
+      localStorage.setItem("users", JSON.stringify(users));
+      loadUserData();
+    }
+
+    function openFDPage() {
+      document.getElementById("dashboardPage").classList.remove("show");
+      document.getElementById("fdPage").classList.add("show");
+    }
+
+    function openStockPage() {
+      document.getElementById("dashboardPage").classList.remove("show");
+      document.getElementById("stockPage").classList.add("show");
+    }
+
+    function backToDashboard() {
+      document.getElementById("fdPage").classList.remove("show");
+      document.getElementById("stockPage").classList.remove("show");
+      document.getElementById("dashboardPage").classList.add("show");
+    }
+  </script>
+
+
+</body></html>
